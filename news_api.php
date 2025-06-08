@@ -40,18 +40,24 @@ class NewsAPI {
     }
     
     public function handleRequest() {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        // Set default response headers first
+        header('Content-Type: application/json');
+        
+        // Get request method safely
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET'; // Default to GET if not set
+        
+        if ($method === 'GET') {
             $news = $this->getAllNews();
-            echo json_encode($news);
+            echo json_encode($news, JSON_UNESCAPED_UNICODE);
         } else {
-            http_response_code(405);
-            echo json_encode(['error' => 'Method not allowed']);
+            http_response_code(405); // Method Not Allowed
+            echo json_encode(['error' => 'Method not allowed'], JSON_UNESCAPED_UNICODE);
         }
     }
     public function getDb() {
         return $this->db;
     }
-    
+
     public function __destruct() {
         if ($this->db) {
             $this->db = null;
